@@ -1,5 +1,5 @@
 import sys
-from utils.utils import load_dataset, select_params, load_dataset_complete
+from utils.utils import load_dataset, select_params, load_dataset_complete, create_directory, plot_boxplot
 from utils.train_test import fit_classifier, test_classifier, fit_ensamble
 import nni
 
@@ -16,7 +16,7 @@ warnings.filterwarnings("ignore")
 logging.getLogger('tensorflow').disabled = True 
 
 
-mode = 'TRAIN'
+mode = 'BoxPlot'
 ensamble = False
 
 if ensamble:
@@ -48,12 +48,31 @@ if mode == 'TRAIN':
     if ensamble:
         mean_acc, std_acc = fit_ensamble(dataset, params, classifiers)
     else:
-        mean_acc, std_acc = fit_classifier(dataset, param_grid, classifier_name)
+        mean_acc, std_acc, scores = fit_classifier(dataset, param_grid, classifier_name)
 
     nni.report_final_result(mean_acc)
 
 elif mode == 'TEST':
-    test_classifier(param_grid, classifier_name)
+    output_dir = '../results/' + classifier_name
+    create_directory(output_dir)
+
+    test_classifier(param_grid, classifier_name, output_dir)
+
+elif mode == 'BoxPlot':
+    output_dir = '../results/'
+    create_directory(output_dir)
+
+    dataset = load_dataset(split='TRAIN')
+
+    names = ['multiHydra', 'rdst']
+
+    all_scores = []
+    for name in names:
+        param_grid = select_params(name)
+        mean_acc, std_acc, scores = fit_classifier(dataset, param_grid, name)
+        all_scores.append(scores)
+
+    plot_boxplot(output_dir, all_scores, names)
 
 
 

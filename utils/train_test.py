@@ -1,5 +1,5 @@
 import numpy as np
-from utils.utils import kfold_split, load_dataset
+from utils.utils import kfold_split, load_dataset, plot_confusion_matrix
 from sklearn.model_selection import KFold
 from sklearn.metrics import accuracy_score
 import nni
@@ -29,15 +29,15 @@ def fit_ensamble(dataset, params, classifier_names):
 
       x_train, y_train, x_val, y_val = kfold_split(X, y, train_index, val_index)
 
-      # transform the labels from integers to one hot vectors
-      x_train, y_train, x_val, y_val, y_true = reshape(classifier_names[0], x_train, x_val, y_train, y_val) 
+      x_train = x_train.reshape((x_train.shape[0],1, x_train.shape[1]))
+      x_val = x_val.reshape((x_val.shape[0],1, x_val.shape[1])) 
 
       model = StackingClassifier(estimators=level_0, final_estimator=level_1, cv=5)
 
       model.fit(x_train, y_train)  
       y_pred = model.predict(x_val)
     
-      acc = accuracy_score(y_true, y_pred)
+      acc = accuracy_score(y_val, y_pred)
       print(f'fold: {i}, accuracy = {acc}')
       scores.append(acc)
       nni.report_intermediate_result(acc)
@@ -76,9 +76,9 @@ def fit_classifier(dataset, params, classifier_name):
     
     print(f'accuracy mean: {np.mean(scores)}, std: {np.std(scores)} \n\n')
 
-    return np.mean(scores), np.std(scores)
+    return np.mean(scores), np.std(scores), scores
 
-def test_classifier(params, classifier_name, output_directory):
+def test_classifier(params, classifier_name, output_dir):
     x_train, y_train, x_test, y_test = load_dataset()
 
     print(params)
@@ -99,6 +99,7 @@ def test_classifier(params, classifier_name, output_directory):
     classifier.fit(x_train, y_train)
     y_pred = classifier.predict(x_test)
     
+    plot_confusion_matrix(output_dir, y_test, y_pred)
 
     acc = accuracy_score(y_test, y_pred)
     print(f'test accuracy = {acc}')

@@ -4,7 +4,7 @@ import matplotlib
 
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
-
+import os
 
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
@@ -69,6 +69,16 @@ def load_dataset_Copper():
 
     return X,y
 
+def create_directory(directory_path):
+    if os.path.exists(directory_path):
+        return None
+    else:
+        try:
+            os.makedirs(directory_path)
+        except:
+            # in case another machine created the path meanwhile !:(
+            return None
+        return directory_path
 
 def calculate_metrics(y_true, y_pred, duration, y_true_val=None, y_pred_val=None):
     res = pd.DataFrame(data=np.zeros((1, 4), dtype=np.float), index=[0],
@@ -145,6 +155,14 @@ def plot_confusion_matrix(output_directory, y_true, y_pred):
     plt.title('Matrice di Confusione')
     plt.show()
     plt.savefig(output_directory+'/cm.png')
+
+def plot_boxplot(output_directory, data, names):
+   import matplotlib.pyplot as plt
+
+   fig = plt.figure(figsize =(10, 7))
+   bp = plt.boxplot(data, labels=names)
+
+   fig.savefig(output_directory + 'boxplot.png')
 
 def kfold_split(X, y, train_index, test_index, normalization=True ):
     x_train = X[train_index]
