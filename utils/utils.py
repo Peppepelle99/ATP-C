@@ -1,4 +1,3 @@
-from builtins import print
 import numpy as np
 import pandas as pd
 import matplotlib
@@ -6,25 +5,20 @@ import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
 
-import os
 
-import sklearn
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.model_selection import train_test_split
-import tensorflow.keras as keras
-import tensorflow as tf
+
 
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
 
-from scipy.interpolate import interp1d
 np.float = float
 
-from aeon.datasets import load_classification
 
 
 
@@ -60,14 +54,6 @@ def load_dataset_complete(split = None):
     return X_train, y_train, X_test, y_test
 
 
-def reshape(x_train, x_val, y_train, y_val):
-
-    x_train = x_train.reshape((x_train.shape[0],1, x_train.shape[1]))
-    x_val = x_val.reshape((x_val.shape[0],1, x_val.shape[1])) 
-    
-    return x_train, y_train, x_val, y_val
-
-
 def load_dataset_platinum():
 
     data = np.load('archives/Dataset_Liquid_Platinum.npy')
@@ -82,69 +68,6 @@ def load_dataset_Copper():
     y = data[:, -1]
 
     return X,y
-
-def create_directory(directory_path):
-    if os.path.exists(directory_path):
-        return None
-    else:
-        try:
-            os.makedirs(directory_path)
-        except:
-            # in case another machine created the path meanwhile !:(
-            return None
-        return directory_path
-
-
-def create_path(root_dir, classifier_name, archive_name):
-    output_directory = root_dir + '/results/' + classifier_name + '/' + archive_name + '/'
-    if os.path.exists(output_directory):
-        return None
-    else:
-        os.makedirs(output_directory)
-        return output_directory
-
-
-
-
-
-def get_func_length(x_train, x_test, func):
-    if func == min:
-        func_length = np.inf
-    else:
-        func_length = 0
-
-    n = x_train.shape[0]
-    for i in range(n):
-        func_length = func(func_length, x_train[i].shape[1])
-
-    n = x_test.shape[0]
-    for i in range(n):
-        func_length = func(func_length, x_test[i].shape[1])
-
-    return func_length
-
-
-def transform_to_same_length(x, n_var, max_length):
-    n = x.shape[0]
-
-    # the new set in ucr form np array
-    ucr_x = np.zeros((n, max_length, n_var), dtype=np.float64)
-
-    # loop through each time series
-    for i in range(n):
-        mts = x[i]
-        curr_length = mts.shape[1]
-        idx = np.array(range(curr_length))
-        idx_new = np.linspace(0, idx.max(), max_length)
-        for j in range(n_var):
-            ts = mts[j]
-            # linear interpolation
-            f = interp1d(idx, ts, kind='cubic')
-            new_ts = f(idx_new)
-            ucr_x[i, :, j] = new_ts
-
-    return ucr_x
-
 
 
 def calculate_metrics(y_true, y_pred, duration, y_true_val=None, y_pred_val=None):
@@ -161,63 +84,6 @@ def calculate_metrics(y_true, y_pred, duration, y_true_val=None, y_pred_val=None
     res['duration'] = duration
     return res
 
-
-def save_test_duration(file_name, test_duration):
-    res = pd.DataFrame(data=np.zeros((1, 1), dtype=float), index=[0],
-                       columns=['test_duration'])
-    res['test_duration'] = test_duration
-    res.to_csv(file_name, index=False)
-
-
-def plot_epochs_metric(hist, file_name, metric='loss'):
-    plt.figure()
-    plt.plot(hist.history[metric])
-    plt.plot(hist.history['val_' + metric])
-    plt.title('model ' + metric)
-    plt.ylabel(metric, fontsize='large')
-    plt.xlabel('epoch', fontsize='large')
-    plt.legend(['train', 'val'], loc='upper left')
-    plt.savefig(file_name, bbox_inches='tight')
-    plt.close()
-
-def save_logs(output_directory, hist, y_pred, y_true, duration, lr=True, y_true_val=None, y_pred_val=None):
-    hist_df = pd.DataFrame(hist.history)
-    hist_df.to_csv(output_directory + 'history.csv', index=False)
-
-    df_metrics = calculate_metrics(y_true, y_pred, duration, y_true_val, y_pred_val)
-    df_metrics.to_csv(output_directory + 'df_metrics.csv', index=False)
-
-    index_best_model = hist_df['loss'].idxmin()
-    row_best_model = hist_df.loc[index_best_model]
-
-    df_best_model = pd.DataFrame(data=np.zeros((1, 6), dtype=np.float), index=[0],
-                                 columns=['best_model_train_loss', 'best_model_val_loss', 'best_model_train_acc',
-                                          'best_model_val_acc', 'best_model_learning_rate', 'best_model_nb_epoch'])
-
-    df_best_model['best_model_train_loss'] = row_best_model['loss']
-    df_best_model['best_model_val_loss'] = row_best_model['val_loss']
-    df_best_model['best_model_train_acc'] = row_best_model['accuracy']
-    df_best_model['best_model_val_acc'] = row_best_model['val_accuracy']
-    if lr == True:
-        df_best_model['best_model_learning_rate'] = row_best_model['lr']
-    df_best_model['best_model_nb_epoch'] = index_best_model
-
-    df_best_model.to_csv(output_directory + 'df_best_model.csv', index=False)
-
-    #for FCN there is no hyperparameters fine tuning - everything is static in code
-
-    # plot losses
-    plot_epochs_metric(hist, output_directory + 'epochs_loss.png')
-
-    return df_metrics
-
-def save_experiment(output_directory, results):
-    columns = ['lr', 'mini_batch', 'transfer_learning', 'mean_acc', 'std_acc']
-
-    # Creazione del DataFrame
-    df_experiment = pd.DataFrame(results, columns=columns)
-
-    df_experiment.to_csv(output_directory + 'df_experiment.csv', index=False)
 
 def visualize_filter(root_dir):
     import tensorflow.keras as keras
@@ -268,7 +134,7 @@ def visualize_filter(root_dir):
 
     return 1
 
-def visualize_confusion_matrix(output_directory, y_true, y_pred):
+def plot_confusion_matrix(output_directory, y_true, y_pred):
     cm = confusion_matrix(y_true, y_pred)
 
     # Genera un grafico della matrice di confusione utilizzando seaborn
@@ -299,24 +165,7 @@ def kfold_split(X, y, train_index, test_index, normalization=True ):
 
     return x_train, y_train, x_test, y_test
 
-def pre_train(output_folder, model):
-    x_train, y_train = load_classification(name="TwoPatterns", split="TRAIN")
-    x_test, y_test = load_classification(name="TwoPatterns", split="TEST")
 
-    enc = sklearn.preprocessing.OneHotEncoder(categories='auto')
-    enc.fit(np.concatenate((y_train, y_test), axis=0).reshape(-1, 1))
-    y_train = enc.transform(y_train.reshape(-1, 1)).toarray()
-    y_test = enc.transform(y_test.reshape(-1, 1)).toarray()
-
-    x_train = x_train.reshape((x_train.shape[0],x_train.shape[2], 1))
-    x_test = x_test.reshape((x_test.shape[0],x_test.shape[2], 1))
-
-    model.fit(x_train, y_train, batch_size=6, epochs=30,
-                              verbose=True, validation_data=(x_test, y_test))
-    
-    model.save(output_folder + '/pretrained_model.hdf5')
-    
-    return model
 
 def select_params(classifier_name):
     if classifier_name == 'resnet': 

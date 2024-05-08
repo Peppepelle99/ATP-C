@@ -1,6 +1,5 @@
-from utils.utils import create_directory
 import sys
-from utils.utils import load_dataset, select_params, pre_train, load_dataset_complete
+from utils.utils import load_dataset, select_params, load_dataset_complete
 from utils.train_test import fit_classifier, test_classifier, fit_ensamble
 import nni
 

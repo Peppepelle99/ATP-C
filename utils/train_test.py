@@ -1,5 +1,5 @@
 import numpy as np
-from utils.utils import kfold_split, reshape, load_dataset
+from utils.utils import kfold_split, load_dataset
 from sklearn.model_selection import KFold
 from sklearn.metrics import accuracy_score
 import nni
@@ -45,7 +45,6 @@ def fit_ensamble(dataset, params, classifier_names):
     print(f'accuracy mean: {np.mean(scores)}, std: {np.std(scores)} \n\n')
 
     return np.mean(scores), np.std(scores)
-
 
 def fit_classifier(dataset, params, classifier_name):
 
