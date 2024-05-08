@@ -3,48 +3,6 @@ from utils.utils import kfold_split, load_dataset, plot_confusion_matrix
 from sklearn.model_selection import KFold
 from sklearn.metrics import accuracy_score
 import nni
-import keras
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.svm import SVC
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import StackingClassifier
-
-def fit_ensamble(dataset, params, classifier_names):
-    
-    X, y = dataset
-
-    level_0 = []
-    for name, param in zip(classifier_names, params):
-       
-       classifier = create_classifier(name, param)
-       level_0.append((name,classifier))
-    
-    level_1 = LogisticRegression()
-
-    kfold = KFold(n_splits=5, shuffle=True, random_state=42)
-
-    scores = []        
-
-    for i, (train_index, val_index) in enumerate(kfold.split(X, y)):
-
-      x_train, y_train, x_val, y_val = kfold_split(X, y, train_index, val_index)
-
-      x_train = x_train.reshape((x_train.shape[0],1, x_train.shape[1]))
-      x_val = x_val.reshape((x_val.shape[0],1, x_val.shape[1])) 
-
-      model = StackingClassifier(estimators=level_0, final_estimator=level_1, cv=5)
-
-      model.fit(x_train, y_train)  
-      y_pred = model.predict(x_val)
-    
-      acc = accuracy_score(y_val, y_pred)
-      print(f'fold: {i}, accuracy = {acc}')
-      scores.append(acc)
-      nni.report_intermediate_result(acc)
-    
-    print(f'accuracy mean: {np.mean(scores)}, std: {np.std(scores)} \n\n')
-
-    return np.mean(scores), np.std(scores)
 
 def fit_classifier(dataset, params, classifier_name):
 
@@ -76,7 +34,7 @@ def fit_classifier(dataset, params, classifier_name):
     
     print(f'accuracy mean: {np.mean(scores)}, std: {np.std(scores)} \n\n')
 
-    return np.mean(scores), np.std(scores), scores
+    return np.mean(scores), np.std(scores)
 
 def test_classifier(params, classifier_name, output_dir):
     x_train, y_train, x_test, y_test = load_dataset()
@@ -124,4 +82,8 @@ def create_classifier(classifier_name, params):
         s_l = [params['shapelet_lengths']] if params['shapelet_lengths'] != "None" else None
         from aeon.classification.shapelet_based import RDSTClassifier
         return RDSTClassifier(max_shapelets = params['max_shapelets'], shapelet_lengths = s_l, random_state = resample_id)
+    
+    if classifier_name[0]:
+        from models.model_ensamble import ensamble
+        return ensamble(classifier_name, params)
     

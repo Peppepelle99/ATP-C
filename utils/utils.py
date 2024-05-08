@@ -156,13 +156,26 @@ def plot_confusion_matrix(output_directory, y_true, y_pred):
     plt.show()
     plt.savefig(output_directory+'/cm.png')
 
-def plot_boxplot(output_directory, data, names):
-   import matplotlib.pyplot as plt
+def plot_accuracy(output_directory, scores, stds, names):
+   
+    import matplotlib.pyplot as plt
+ 
 
-   fig = plt.figure(figsize =(10, 7))
-   bp = plt.boxplot(data, labels=names)
+    # Creazione del grafico a dispersione
+    plt.scatter(names, scores, s=100*np.sqrt(stds), alpha=0.5)
+    plt.title('Media e Deviazione Standard dell\'Accuratezza dei Modelli')
+    plt.xlabel('Modelli')
+    plt.ylabel('Accuratezza Media')
+    plt.grid(True)
 
-   fig.savefig(output_directory + 'boxplot.png')
+    # Aggiunta delle barre di errore
+    for x, y,std in zip(names, scores, stds):
+        plt.errorbar(x, y, yerr=std, fmt='o', capsize=5, color='black')
+
+    plt.yticks(np.arange(0.75, 1.05, 0.05))
+
+
+    plt.savefig(output_directory + 'accuracy_plot.png')
 
 def kfold_split(X, y, train_index, test_index, normalization=True ):
     x_train = X[train_index]
