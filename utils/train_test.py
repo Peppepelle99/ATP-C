@@ -36,8 +36,8 @@ def fit_classifier(dataset, params, classifier_name):
 
     return np.mean(scores), np.std(scores)
 
-def test_classifier(params, classifier_name, output_dir):
-    x_train, y_train, x_test, y_test = load_dataset()
+def test_classifier(dataset, params, classifier_name, output_dir):
+    x_train, y_train, x_test, y_test = dataset
 
     print(params)
 

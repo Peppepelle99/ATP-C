@@ -16,8 +16,8 @@ warnings.filterwarnings("ignore")
 logging.getLogger('tensorflow').disabled = True 
 
 
-mode = 'TRAIN'
-ensamble = True
+mode = 'TEST'
+ensamble = False
 
 if ensamble:
     classifier_name = sys.argv[1:]
@@ -44,7 +44,7 @@ optimized_params = nni.get_next_parameter()
 
 if mode == 'TRAIN':
 
-    dataset = load_dataset(split='TRAIN')
+    dataset = load_dataset_complete(split='TRAIN')
     mean_acc, std_acc = fit_classifier(dataset, param_grid, classifier_name)
 
     nni.report_final_result(mean_acc)
@@ -52,8 +52,9 @@ if mode == 'TRAIN':
 elif mode == 'TEST':
     output_dir = '../results/' + classifier_name
     create_directory(output_dir)
+    dataset = load_dataset_complete()
 
-    test_classifier(param_grid, classifier_name, output_dir)
+    test_classifier(dataset, param_grid, classifier_name, output_dir)
 
 elif mode == 'accuracy_plot':
     output_dir = '../results/'
