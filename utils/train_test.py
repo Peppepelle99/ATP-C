@@ -78,10 +78,25 @@ def create_classifier(classifier_name, params):
         return InceptionTimeClassifier(n_epochs=params['num_epochs'],batch_size=params['batch_size'], n_classifiers = params['n_classifiers'], depth = params['depth'], verbose=False, random_state = resample_id)
     
     if classifier_name == 'rdst':
-        
         s_l = [params['shapelet_lengths']] if params['shapelet_lengths'] != "None" else None
         from aeon.classification.shapelet_based import RDSTClassifier
         return RDSTClassifier(max_shapelets = params['max_shapelets'], shapelet_lengths = s_l, random_state = resample_id)
+    
+    if classifier_name == 'weasel-d':
+        from aeon.classification.dictionary_based import WEASEL_V2
+        return WEASEL_V2(min_window = params['min_window'], word_lengths = params['word_lengths'] ,random_state = resample_id)
+    
+    if classifier_name == 'freshPrince':
+        from aeon.classification.feature_based import FreshPRINCEClassifier
+        return FreshPRINCEClassifier(n_estimators=params['n_estimators'], random_state = resample_id)
+    
+    if classifier_name == 'drCif':
+        from aeon.classification.interval_based import DrCIFClassifier
+        return DrCIFClassifier(n_estimators=params['n_estimators'], random_state = resample_id)
+    
+    if classifier_name == 'EE':
+        from aeon.classification.distance_based import ElasticEnsemble
+        return ElasticEnsemble(random_state = resample_id)
     
     if classifier_name[0]:
         from models.model_ensamble import ensamble

@@ -225,5 +225,18 @@ def select_params(classifier_name):
                     'max_shapelets': 1000, 
                     'shapelet_lengths': 5,
                 }
+    elif classifier_name == 'weasel-d':
+       return {
+                    'min_window': 4, 
+                    'word_lengths': [1,2],
+                }
+    elif classifier_name == 'freshPrince':
+       return {
+                    'n_estimators': 200, 
+                }
+    elif classifier_name == 'drCif':
+       return {
+                    'n_estimators': 200, 
+                }
     else:
         return { 'none': None}

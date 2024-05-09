@@ -12,6 +12,6 @@ def ensamble(classifier_names, params):
     
     level_1 = LogisticRegression()
 
-    model = StackingClassifier(estimators=level_0, final_estimator=level_1, cv=5)
+    model = StackingClassifier(estimators=level_0, final_estimator=level_1, cv=None)
 
     return model

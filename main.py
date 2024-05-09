@@ -1,6 +1,6 @@
 import sys
 from utils.utils import load_dataset, select_params, load_dataset_complete, create_directory, plot_accuracy
-from utils.train_test import fit_classifier, test_classifier, fit_ensamble
+from utils.train_test import fit_classifier, test_classifier
 import nni
 
 # remove info-warning
@@ -55,13 +55,13 @@ elif mode == 'TEST':
 
     test_classifier(param_grid, classifier_name, output_dir)
 
-elif mode == 'BoxPlot':
+elif mode == 'accuracy_plot':
     output_dir = '../results/'
     create_directory(output_dir)
 
     dataset = load_dataset(split='TRAIN')
 
-    names = ['multiHydra', 'rdst']
+    names = ['hivecote2','multiHydra', 'rdst', 'inceptionT']
 
     all_scores = []
     all_std = []
