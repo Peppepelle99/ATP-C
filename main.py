@@ -1,5 +1,5 @@
 import sys
-from utils.utils import load_dataset, select_params, load_dataset_complete, create_directory, plot_accuracy
+from utils.utils import load_dataset, select_params, load_dataset_complete, create_directory, plot_accuracy, plot_confusion_matrix
 from utils.train_test import fit_classifier, test_classifier
 import nni
 
@@ -9,6 +9,7 @@ import tensorflow as tf
 import warnings
 import logging
 import os
+import numpy as np
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  
 tf.get_logger().setLevel('ERROR')  
@@ -21,7 +22,7 @@ datasets = {
 }
 
 #SETTINGS
-mode = 'accuracy_plot'
+mode = 'TEST'
 ensamble = False
 dataset_name = 'Liquid'
 
@@ -54,11 +55,29 @@ if mode == 'TRAIN':
 
 elif mode == 'TEST':
 
-    output_dir = '../results/' + classifier_name
+    compare = False
+
+    output_dir = '../results/'
     create_directory(output_dir)
     dataset = datasets[dataset_name]()
 
-    test_classifier(dataset, param_grid, classifier_name, output_dir)
+    if compare:
+        names = ['rdst','multiHydra']
+        all_pred = []
+        all_true = []
+        for name in names:
+            param_grid = select_params(name)
+            y_pred, y_true = test_classifier(dataset, param_grid, name, output_dir)
+            all_pred.append(np.array(y_pred))
+            all_true.append(np.array(y_true))
+
+        all_pred = np.concatenate(all_pred)
+        print(all_pred)
+        all_true = np.concatenate(all_true)
+        plot_confusion_matrix(output_dir, all_true, all_pred)
+    else:
+        output_dir = output_dir + classifier_name
+        test_classifier(dataset, param_grid, classifier_name, output_dir)
 
 elif mode == 'accuracy_plot':
     output_dir = '../results/'

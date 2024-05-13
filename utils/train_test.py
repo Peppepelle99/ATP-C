@@ -62,6 +62,8 @@ def test_classifier(dataset, params, classifier_name, output_dir):
     acc = accuracy_score(y_test, y_pred)
     print(f'test accuracy = {acc}')
 
+    return y_pred, y_test
+
 def create_classifier(classifier_name, params):
     resample_id = 1
 
