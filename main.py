@@ -15,9 +15,15 @@ tf.get_logger().setLevel('ERROR')
 warnings.filterwarnings("ignore")  
 logging.getLogger('tensorflow').disabled = True 
 
+datasets = {
+    'Liquid': load_dataset,
+    'Complete': load_dataset_complete
+}
 
-mode = 'TEST'
+#SETTINGS
+mode = 'accuracy_plot'
 ensamble = False
+dataset_name = 'Liquid'
 
 if ensamble:
     classifier_name = sys.argv[1:]
@@ -27,10 +33,7 @@ else:
     classifier_name = sys.argv[1]
     print('Method: ', classifier_name, mode)
 
-
-
 if ensamble:
-    #param_grid = select_params(classifier_name[0])
 
     param_grid = []
     for c in classifier_name:
@@ -38,21 +41,22 @@ if ensamble:
 else:
     param_grid = select_params(classifier_name)
 
-optimized_params = nni.get_next_parameter()
-#param_grid.update(optimized_params)
+    optimized_params = nni.get_next_parameter()
+    param_grid.update(optimized_params)
 
 
 if mode == 'TRAIN':
 
-    dataset = load_dataset_complete(split='TRAIN')
+    dataset = datasets[dataset_name](split='TRAIN')
     mean_acc, std_acc = fit_classifier(dataset, param_grid, classifier_name)
 
     nni.report_final_result(mean_acc)
 
 elif mode == 'TEST':
+
     output_dir = '../results/' + classifier_name
     create_directory(output_dir)
-    dataset = load_dataset_complete()
+    dataset = datasets[dataset_name]()
 
     test_classifier(dataset, param_grid, classifier_name, output_dir)
 
@@ -60,9 +64,9 @@ elif mode == 'accuracy_plot':
     output_dir = '../results/'
     create_directory(output_dir)
 
-    dataset = load_dataset(split='TRAIN')
+    dataset = datasets[dataset_name](split='TRAIN')
 
-    names = ['hivecote2','multiHydra', 'rdst', 'inceptionT']
+    names = ['rdst','multiHydra']
 
     all_scores = []
     all_std = []
@@ -71,8 +75,15 @@ elif mode == 'accuracy_plot':
         mean_acc, std_acc = fit_classifier(dataset, param_grid, name)
         all_scores.append(mean_acc)
         all_std.append(std_acc)
+    
+    #sort in descend order
+    sorted_indices = [i for i, _ in sorted(enumerate(all_scores), key=lambda x: x[1], reverse=True)]
 
-    plot_accuracy(output_dir, all_scores, all_std, names)
+    all_scores = [all_scores[i] for i in sorted_indices]
+    all_std = [all_std[i] for i in sorted_indices]
+    names = [names[i] for i in sorted_indices]
+
+    plot_accuracy(output_dir, all_scores, all_std, names, dataset_name)
 
 
 

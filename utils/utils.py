@@ -156,14 +156,14 @@ def plot_confusion_matrix(output_directory, y_true, y_pred):
     plt.show()
     plt.savefig(output_directory+'/cm.png')
 
-def plot_accuracy(output_directory, scores, stds, names):
+def plot_accuracy(output_directory, scores, stds, names, dataset):
    
     import matplotlib.pyplot as plt
  
 
     # Creazione del grafico a dispersione
     plt.scatter(names, scores, s=100*np.sqrt(stds), alpha=0.5)
-    plt.title('Media e Deviazione Standard dell\'Accuratezza dei Modelli')
+    plt.title(f'Datset: {dataset}')
     plt.xlabel('Modelli')
     plt.ylabel('Accuratezza Media')
     plt.grid(True)
@@ -172,10 +172,10 @@ def plot_accuracy(output_directory, scores, stds, names):
     for x, y,std in zip(names, scores, stds):
         plt.errorbar(x, y, yerr=std, fmt='o', capsize=5, color='black')
 
-    plt.yticks(np.arange(0.75, 1.05, 0.05))
+    plt.yticks(np.arange(0.75, 1, 0.05))
 
 
-    plt.savefig(output_directory + 'accuracy_plot.png')
+    plt.savefig(f'{output_directory}accuracy_plot_2_{dataset}.png')
 
 def kfold_split(X, y, train_index, test_index, normalization=True ):
     x_train = X[train_index]
@@ -227,8 +227,8 @@ def select_params(classifier_name):
                 }
     elif classifier_name == 'weasel-d':
        return {
-                    'min_window': 4, 
-                    'word_lengths': [1,2],
+                    'min_window': 10, 
+                    'word_lengths': [10,11],
                 }
     elif classifier_name == 'freshPrince':
        return {
