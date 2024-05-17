@@ -24,7 +24,7 @@ datasets = {
 #SETTINGS
 mode = 'TRAIN'
 ensamble = False
-dataset_name = 'Liquid'
+dataset_name = 'Complete'
 
 if ensamble:
     classifier_name = sys.argv[1:]
