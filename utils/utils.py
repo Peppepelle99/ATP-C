@@ -172,7 +172,7 @@ def plot_accuracy(output_directory, scores, stds, names, dataset):
     for x, y,std in zip(names, scores, stds):
         plt.errorbar(x, y, yerr=std, fmt='o', capsize=5, color='black')
 
-    plt.yticks(np.arange(0.75, 1, 0.05))
+    plt.yticks(np.arange(0.65, 1, 0.05))
 
 
     plt.savefig(f'{output_directory}accuracy_plot_2_{dataset}.png')
@@ -198,7 +198,8 @@ def kfold_split(X, y, train_index, test_index, normalization=True ):
 
 
 
-def select_params(classifier_name):
+def select_params(classifier_name, dataset = 'Liquid'):
+
     if classifier_name == 'resnet': 
         return {
                     'learning_rate': 0.001,
@@ -207,36 +208,75 @@ def select_params(classifier_name):
                     'num_epochs': 20
                 }
     
-    elif classifier_name == 'multiHydra': #best 95%
-        return {
-                    'n_kernels': 8,
-                    'n_groups': 64
+    elif classifier_name == 'multiHydra': 
+        if dataset == 'Liquid': #best 95%
+            return {
+                        'n_kernels': 8,
+                        'n_groups': 64
+                    }
+        else :
+           return { #best 81%
+                        'n_kernels': 46,
+                        'n_groups': 91
+                    }
+           
+        
+    elif classifier_name == 'inceptionT': 
+        if dataset == 'Liquid': #best 93%
+            return {
+                    "batch_size": 64,
+                    "num_epochs": 250,
+                    "depth": 2,
+                    "n_classifiers": 3
                 }
-    elif classifier_name == 'inceptionT': #best 93%
-        return {
-                "batch_size": 64,
-                "num_epochs": 250,
-                "depth": 2,
-                "n_classifiers": 3
-            }
+        else: #best 83%
+             return {
+                    "batch_size": 34,
+                    "num_epochs": 250,
+                    "depth": 5,
+                    "n_classifiers": 2
+                }
     
-    elif classifier_name == 'rdst': #best 93%
+    elif classifier_name == 'rdst': 
+        if dataset == 'Liquid': #best 93%
+            return {
+                        'max_shapelets': 1000, 
+                        'shapelet_lengths': 5,
+                    }
+        else:
+           return { #best 77%
+                        'max_shapelets': 1000, 
+                        'shapelet_lengths': 11,
+                    }
+    elif classifier_name == 'weasel-d': 
+       if dataset == 'Liquid':#best 93%
+            return {
+                            'min_window': 4, 
+                            'word_lengths': [3,4],
+                        }
+       else:
+            return { #best 79%
+                            'min_window': 4, 
+                            'word_lengths': [7,10],
+                        }
+    elif classifier_name == 'freshPrince': 
+       if dataset == 'Liquid': #best 93%
+            return {
+                            'n_estimators': 15, 
+                        }
+       else:
+           return {
+                            'n_estimators': 15, 
+                        }
+           
+    elif classifier_name == 'drCif': 
+       if dataset == 'Liquid': #best 93%
         return {
-                    'max_shapelets': 1000, 
-                    'shapelet_lengths': 5,
-                }
-    elif classifier_name == 'weasel-d':
-       return {
-                    'min_window': 10, 
-                    'word_lengths': [10,11],
-                }
-    elif classifier_name == 'freshPrince':
-       return {
-                    'n_estimators': 200, 
-                }
-    elif classifier_name == 'drCif':
-       return {
-                    'n_estimators': 200, 
-                }
+                        'n_estimators': 25, 
+                    }
+       else:
+          return { #best 81%
+                        'n_estimators': 225, 
+                    }
     else:
         return { 'none': None}

@@ -22,7 +22,7 @@ datasets = {
 }
 
 #SETTINGS
-mode = 'TRAIN'
+mode = 'accuracy_plot'
 ensamble = False
 dataset_name = 'Complete'
 
@@ -40,7 +40,7 @@ if ensamble:
     for c in classifier_name:
         param_grid.append(select_params(c))
 else:
-    param_grid = select_params(classifier_name)
+    param_grid = select_params(classifier_name, dataset_name)
 
     optimized_params = nni.get_next_parameter()
     param_grid.update(optimized_params)
@@ -87,12 +87,12 @@ elif mode == 'accuracy_plot':
 
     dataset = datasets[dataset_name](split='TRAIN')
 
-    names = ['rdst','multiHydra']
+    names = ['rdst','multiHydra', 'inceptionT', 'weasel-d', 'hivecote2', 'freshPrince', 'drCif']
 
     all_scores = []
     all_std = []
     for name in names:
-        param_grid = select_params(name)
+        param_grid = select_params(name, dataset_name)
         mean_acc, std_acc = fit_classifier(dataset, param_grid, name)
         all_scores.append(mean_acc)
         all_std.append(std_acc)
