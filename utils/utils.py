@@ -69,6 +69,22 @@ def load_dataset_Copper():
 
     return X,y
 
+def load_dataset_condensatore(split = None):
+    data = np.load('../archives/Dataset_Condensatore.npy')
+    X = data[:, 1100:-1]  
+    y = data[:, -1]   
+
+    print(f'X shape: {X.shape}')
+    print(f'y shape: {y.shape}')
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    if split == 'TRAIN':
+        return  X_train, y_train
+    elif split == 'TEST':
+        return X_test, y_test
+    else:
+        return X_train, y_train, X_test, y_test
+
 def create_directory(directory_path):
     if os.path.exists(directory_path):
         return None

@@ -1,5 +1,5 @@
 import sys
-from utils.utils import load_dataset, select_params, load_dataset_complete, create_directory, plot_accuracy, plot_confusion_matrix
+from utils.utils import load_dataset, select_params, load_dataset_complete,load_dataset_condensatore, create_directory, plot_accuracy, plot_confusion_matrix
 from utils.train_test import fit_classifier, test_classifier
 import nni
 
@@ -18,29 +18,28 @@ logging.getLogger('tensorflow').disabled = True
 
 datasets = {
     'Liquid': load_dataset,
-    'Complete': load_dataset_complete
+    'Complete': load_dataset_complete,
+    'Condensatore': load_dataset_condensatore
 }
 
 #SETTINGS
-mode = 'accuracy_plot'
+mode = 'TRAIN'
 ensamble = False
-dataset_name = 'Complete'
+dataset_name = 'Condensatore'
 
 if ensamble:
     classifier_name = sys.argv[1:]
-
     print('Method: ', classifier_name, mode)
 else:
     classifier_name = sys.argv[1]
     print('Method: ', classifier_name, mode)
 
 if ensamble:
-
     param_grid = []
     for c in classifier_name:
         param_grid.append(select_params(c))
 else:
-    param_grid = select_params(classifier_name, dataset_name)
+    param_grid = select_params(classifier_name, dataset='Liquid')
 
     optimized_params = nni.get_next_parameter()
     param_grid.update(optimized_params)
