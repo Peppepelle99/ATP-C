@@ -69,10 +69,53 @@ def load_dataset_Copper():
 
     return X,y
 
+def moving_average(data, window_size):
+    return np.convolve(data, np.ones(window_size)/window_size, mode='valid')
+
+def downsampling(X, type):
+
+    if type == 'simple':
+        return X[:, ::5]
+    
+    if type == 'moving_avg':
+
+        original_points = X.shape[1]
+        target_points = 1500
+        window_size = int(original_points / target_points)  
+        data_moving_avg = np.array([moving_average(sample, window_size) for sample in X])
+
+        print(data_moving_avg.shape)
+
+        
+        return data_moving_avg[:, ::5]
+    
+    if type == 'interpol':
+
+        from scipy.interpolate import interp1d
+
+        # Numero target di punti
+        target_points = 1500
+
+        # Creare nuovo array per i dati ridotti
+        data_interpolated = np.zeros((X.shape[0], target_points))
+
+        # Interpolare ciascun campione
+        for i, sample in enumerate(X):
+            x = np.linspace(0, len(sample)-1, len(sample))
+            f = interp1d(x, sample, kind='linear')
+            x_new = np.linspace(0, len(sample)-1, target_points)
+            data_interpolated[i, :] = f(x_new)
+        
+        return data_interpolated
+
+
+
 def load_dataset_condensatore(split = None):
     data = np.load('../archives/Dataset_Condensatore.npy')
     X = data[:, 1100:-1]  
     y = data[:, -1]   
+
+    X = downsampling(X, 'simple')
 
     print(f'X shape: {X.shape}')
     print(f'y shape: {y.shape}')
