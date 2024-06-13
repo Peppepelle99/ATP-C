@@ -80,14 +80,11 @@ def downsampling(X, type):
     if type == 'moving_avg':
 
         original_points = X.shape[1]
-        target_points = 1500
+        target_points = 888
         window_size = int(original_points / target_points)  
         data_moving_avg = np.array([moving_average(sample, window_size) for sample in X])
-
-        print(data_moving_avg.shape)
-
         
-        return data_moving_avg[:, ::5]
+        return data_moving_avg[:, ::10]
     
     if type == 'interpol':
 
@@ -115,7 +112,7 @@ def load_dataset_condensatore(split = None):
     X = data[:, 1100:-1]  
     y = data[:, -1]   
 
-    X = downsampling(X, 'simple')
+    X = downsampling(X, 'moving_avg')
 
     print(f'X shape: {X.shape}')
     print(f'y shape: {y.shape}')
@@ -268,7 +265,7 @@ def select_params(classifier_name, dataset = 'Liquid'):
                 }
     
     elif classifier_name == 'multiHydra': 
-        if dataset == 'Liquid': #best 95%
+        if dataset == 'Liquid': #best 95% 
             return {
                         'n_kernels': 8,
                         'n_groups': 64
