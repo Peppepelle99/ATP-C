@@ -294,15 +294,20 @@ def select_params(classifier_name, dataset = 'Liquid'):
                 }
     
     elif classifier_name == 'rdst': 
-        if dataset == 'Liquid': #best 93%
+        if dataset == 'Liquid': #best 93% 
             return {
                         'max_shapelets': 1000, 
                         'shapelet_lengths': 5,
                     }
-        else:
+        elif dataset == 'Complete':
            return { #best 77%
                         'max_shapelets': 1000, 
                         'shapelet_lengths': 11,
+                    }
+        else:
+            return { #best 94
+                        'max_shapelets': 1000, 
+                        'shapelet_lengths': None,
                     }
     elif classifier_name == 'weasel-d': 
        if dataset == 'Liquid':#best 93%
