@@ -337,13 +337,17 @@ def select_params(classifier_name, dataset = 'Liquid'):
                         }
            
     elif classifier_name == 'drCif': 
-       if dataset == 'Liquid': #best 93%
-        return {
+       if dataset == 'Liquid': #best 93% 
+            return {
                         'n_estimators': 25, 
                     }
-       else:
-          return { #best 81%
+       elif dataset == 'Complete':
+            return { #best 81%
                         'n_estimators': 225, 
+                    }
+       else:
+            return {
+                        'n_estimators': 164, 
                     }
     else:
         return { 'none': None}
