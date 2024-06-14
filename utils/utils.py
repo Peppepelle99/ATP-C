@@ -310,15 +310,21 @@ def select_params(classifier_name, dataset = 'Liquid'):
                         'shapelet_lengths': None,
                     }
     elif classifier_name == 'weasel-d': 
+       
        if dataset == 'Liquid':#best 93%
             return {
                             'min_window': 4, 
                             'word_lengths': [3,4],
                         }
-       else:
+       elif dataset == 'Complete':
             return { #best 79%
                             'min_window': 4, 
                             'word_lengths': [7,10],
+                        }
+       else:
+           return { #best 93%
+                            'min_window': 8, 
+                            'word_lengths': [10,11],
                         }
     elif classifier_name == 'freshPrince': 
        if dataset == 'Liquid': #best 93%
