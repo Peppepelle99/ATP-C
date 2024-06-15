@@ -285,13 +285,21 @@ def select_params(classifier_name, dataset = 'Liquid'):
                     "depth": 2,
                     "n_classifiers": 3
                 }
-        else: #best 83%
+        elif dataset == 'Complete': #best 83%
              return {
                     "batch_size": 34,
                     "num_epochs": 250,
                     "depth": 5,
                     "n_classifiers": 2
                 }
+        else:
+            return { #best 92%
+                    "batch_size": 44,
+                    "num_epochs": 250,
+                    "depth": 4,
+                    "n_classifiers": 2
+                } 
+            
     
     elif classifier_name == 'rdst': 
         if dataset == 'Liquid': #best 93% 
