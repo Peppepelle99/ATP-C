@@ -270,10 +270,15 @@ def select_params(classifier_name, dataset = 'Liquid'):
                         'n_kernels': 8,
                         'n_groups': 64
                     }
-        else :
+        elif dataset == 'Complete' :
            return { #best 81%
                         'n_kernels': 46,
                         'n_groups': 91
+                    }
+        else:
+            return { #best 95
+                        "n_kernels": 5,
+                        "n_groups": 36
                     }
            
         
@@ -317,6 +322,7 @@ def select_params(classifier_name, dataset = 'Liquid'):
                         'max_shapelets': 1000, 
                         'shapelet_lengths': None,
                     }
+        
     elif classifier_name == 'weasel-d': 
        
        if dataset == 'Liquid':#best 93%
@@ -334,7 +340,9 @@ def select_params(classifier_name, dataset = 'Liquid'):
                             'min_window': 8, 
                             'word_lengths': [10,11],
                         }
+       
     elif classifier_name == 'freshPrince': 
+       
        if dataset == 'Liquid': #best 93%
             return {
                             'n_estimators': 15, 
@@ -345,6 +353,7 @@ def select_params(classifier_name, dataset = 'Liquid'):
                         }
            
     elif classifier_name == 'drCif': 
+       
        if dataset == 'Liquid': #best 93% 
             return {
                         'n_estimators': 25, 
@@ -358,4 +367,5 @@ def select_params(classifier_name, dataset = 'Liquid'):
                         'n_estimators': 164, 
                     }
     else:
+        
         return { 'none': None}
