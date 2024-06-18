@@ -364,8 +364,8 @@ def select_params(classifier_name, dataset = 'Liquid'):
                     }
        else:
             return {
-                        'n_estimators': 164, 
+                        'n_estimators': 41, 
                     }
     else:
-        
+
         return { 'none': None}
