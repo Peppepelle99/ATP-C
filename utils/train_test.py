@@ -69,7 +69,7 @@ def create_classifier(classifier_name, params):
 
     if classifier_name == 'hivecote2':
         from aeon.classification.hybrid import HIVECOTEV2
-        return HIVECOTEV2(random_state = resample_id)
+        return HIVECOTEV2(random_state = resample_id, time_limit_in_minutes=2)
     
     if classifier_name == 'multiHydra':
         from aeon.classification.convolution_based import MultiRocketHydraClassifier

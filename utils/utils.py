@@ -231,7 +231,7 @@ def plot_accuracy(output_directory, scores, stds, names, dataset):
     plt.yticks(np.arange(0.65, 1, 0.05))
 
 
-    plt.savefig(f'{output_directory}accuracy_plot_2_{dataset}.png')
+    plt.savefig(f'{output_directory}/accuracy_plot.png')
 
 def kfold_split(X, y, train_index, test_index, normalization=True ):
     x_train = X[train_index]
@@ -320,7 +320,7 @@ def select_params(classifier_name, dataset = 'Liquid'):
         else:
             return { #best 94
                         'max_shapelets': 1000, 
-                        'shapelet_lengths': None,
+                        'shapelet_lengths': "None",
                     }
         
     elif classifier_name == 'weasel-d': 

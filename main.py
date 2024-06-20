@@ -81,7 +81,7 @@ elif mode == 'TEST':
         test_classifier(dataset, param_grid, classifier_name, output_dir)
 
 elif mode == 'accuracy_plot':
-    output_dir = '../results/'
+    output_dir = f'../results/{dataset_name}'
     create_directory(output_dir)
 
     dataset = datasets[dataset_name](split='TRAIN')
