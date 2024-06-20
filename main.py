@@ -39,7 +39,7 @@ if ensamble:
     for c in classifier_name:
         param_grid.append(select_params(c))
 else:
-    param_grid = select_params(classifier_name, dataset='Liquid')
+    param_grid = select_params(classifier_name, dataset=dataset_name)
 
     optimized_params = nni.get_next_parameter()
     param_grid.update(optimized_params)

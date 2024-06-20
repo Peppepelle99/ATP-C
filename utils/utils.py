@@ -347,6 +347,10 @@ def select_params(classifier_name, dataset = 'Liquid'):
             return {
                             'n_estimators': 15, 
                         }
+       elif dataset == 'Complete':
+           return {
+                            'n_estimators': 15, 
+                        }
        else:
            return {
                             'n_estimators': 15, 
@@ -363,7 +367,7 @@ def select_params(classifier_name, dataset = 'Liquid'):
                         'n_estimators': 225, 
                     }
        else:
-            return {
+            return { #best 95%
                         'n_estimators': 41, 
                     }
     else:
