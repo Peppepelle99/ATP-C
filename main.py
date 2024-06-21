@@ -23,7 +23,7 @@ datasets = {
 }
 
 #SETTINGS
-mode = 'TRAIN'
+mode = 'TEST'
 ensamble = False
 dataset_name = 'Condensatore'
 
@@ -56,12 +56,12 @@ elif mode == 'TEST':
 
     compare = True
 
-    output_dir = '../results/'
+    output_dir = f'../results/{dataset_name}'
     create_directory(output_dir)
     dataset = datasets[dataset_name]()
 
     if compare:
-        names = ['rdst','multiHydra']
+        names = ['rdst','multiHydra', 'inceptionT', 'weasel-d', 'hivecote2', 'freshPrince', 'drCif']
         all_pred = []
         all_true = []
         all_accuracy = []
