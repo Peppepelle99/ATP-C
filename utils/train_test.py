@@ -3,6 +3,7 @@ from utils.utils import kfold_split, load_dataset, plot_confusion_matrix
 from sklearn.model_selection import KFold
 from sklearn.metrics import accuracy_score
 import nni
+import time
 
 def fit_classifier(dataset, params, classifier_name):
 
@@ -37,7 +38,13 @@ def fit_classifier(dataset, params, classifier_name):
     return np.mean(scores), np.std(scores)
 
 def test_classifier(dataset, params, classifier_name, output_dir):
-    x_train, y_train, x_test, y_test = dataset
+
+    if len(dataset) != 2:
+        x_train, y_train, x_test, y_test = dataset
+    else:
+        x_train, y_train = dataset['train']
+        x_test, y_test = dataset['test']
+    
 
     print(params)
 
@@ -55,14 +62,19 @@ def test_classifier(dataset, params, classifier_name, output_dir):
 
     classifier = create_classifier(classifier_name, params)
     classifier.fit(x_train, y_train)
+
+    start_time = time.time()
     y_pred = classifier.predict(x_test)
+    end_time = time.time()
+
+    print(f'prediction time: {end_time-start_time}')
     
     plot_confusion_matrix(output_dir, y_test, y_pred)
 
     acc = accuracy_score(y_test, y_pred)
     print(f'test accuracy = {acc}')
 
-    return y_pred, y_test, acc
+    return y_pred, y_test, acc, round(end_time-start_time, 3)
 
 def create_classifier(classifier_name, params):
     resample_id = 1

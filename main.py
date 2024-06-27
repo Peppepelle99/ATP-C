@@ -1,5 +1,5 @@
 import sys
-from utils.utils import load_dataset, select_params, load_dataset_complete,load_dataset_condensatore, create_directory, plot_accuracy, plot_confusion_matrix
+from utils.utils import load_dataset, select_params, load_dataset_complete,load_dataset_condensatore, create_directory, plot_accuracy, plot_confusion_matrix, load_dataset_condensatore_isolante
 from utils.train_test import fit_classifier, test_classifier
 import nni
 
@@ -19,7 +19,8 @@ logging.getLogger('tensorflow').disabled = True
 datasets = {
     'Liquid': load_dataset,
     'Complete': load_dataset_complete,
-    'Condensatore': load_dataset_condensatore
+    'Condensatore': load_dataset_condensatore,
+    'Condensatore_isolante': load_dataset_condensatore_isolante
 }
 
 #SETTINGS
@@ -54,33 +55,40 @@ if mode == 'TRAIN':
 
 elif mode == 'TEST':
 
-    compare = True
+    compare = False
 
     output_dir = f'../results/{dataset_name}'
-    create_directory(output_dir)
-    dataset = datasets[dataset_name]()
+
+    #dataset = datasets[dataset_name]()
+    dataset = {
+        'train': datasets['Condensatore'](split='ALL'),
+        'test': datasets['Condensatore_isolante'](split='ALL')
+    }
 
     if compare:
+        create_directory(output_dir)
         names = ['rdst','multiHydra', 'inceptionT', 'weasel-d', 'hivecote2', 'freshPrince', 'drCif']
         all_pred = []
         all_true = []
         all_accuracy = []
         for name in names:
             param_grid = select_params(name)
-            y_pred, y_true, acc = test_classifier(dataset, param_grid, name, output_dir)
+            y_pred, y_true, acc, prediction_time = test_classifier(dataset, param_grid, name, output_dir)
             all_pred.append(np.array(y_pred))
             all_true.append(np.array(y_true))
-            all_accuracy.append((name, acc))
+            all_accuracy.append((name, acc, prediction_time))
 
         all_pred = np.concatenate(all_pred)
         all_true = np.concatenate(all_true)
         plot_confusion_matrix(output_dir, all_true, all_pred)
         print(all_accuracy)
     else:
-        output_dir = output_dir + classifier_name
+        output_dir = output_dir + '/' + classifier_name
+        create_directory(output_dir)
         test_classifier(dataset, param_grid, classifier_name, output_dir)
 
 elif mode == 'accuracy_plot':
+
     output_dir = f'../results/{dataset_name}'
     create_directory(output_dir)
 
