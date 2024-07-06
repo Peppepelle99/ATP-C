@@ -1,5 +1,5 @@
 import sys
-from utils.utils import load_dataset, select_params, load_dataset_complete,load_dataset_condensatore, create_directory, plot_accuracy, plot_confusion_matrix, load_dataset_condensatore_isolante
+from utils.utils import load_dataset, select_params, load_dataset_complete,load_dataset_condensatore, create_directory, plot_accuracy, plot_confusion_matrix, load_dataset_condensatore_isolante, load_dataset_condensatore_conduttivo
 from utils.train_test import fit_classifier, test_classifier
 import nni
 
@@ -20,7 +20,8 @@ datasets = {
     'Liquid': load_dataset,
     'Complete': load_dataset_complete,
     'Condensatore': load_dataset_condensatore,
-    'Condensatore_isolante': load_dataset_condensatore_isolante
+    'Condensatore_isolante': load_dataset_condensatore_isolante,
+    'Condensatore_conduttivo': load_dataset_condensatore_conduttivo
 }
 
 #SETTINGS
@@ -62,7 +63,7 @@ elif mode == 'TEST':
     #dataset = datasets[dataset_name]()
     dataset = {
         'train': datasets['Condensatore'](split='ALL'),
-        'test': datasets['Condensatore_isolante'](split='ALL')
+        'test': datasets['Condensatore_conduttivo'](split='ALL')
     }
 
     if compare:

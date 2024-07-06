@@ -144,6 +144,24 @@ def load_dataset_condensatore_isolante(split = None):
     else:
         return X_train, y_train, X_test, y_test
 
+def load_dataset_condensatore_conduttivo(split = None):
+    data = np.load('../archives/Dataset_Condensatore_conduttivo.npy')
+    X = data[:, 1100:-1]  
+    y = data[:, -1]   
+
+    X = downsampling(X, 'moving_avg')
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    if split == 'TRAIN':
+        return  X_train, y_train
+    elif split == 'TEST':
+        return X_test, y_test
+    elif split == 'ALL':
+        return X, y
+    else:
+        return X_train, y_train, X_test, y_test
+
 def create_directory(directory_path):
     if os.path.exists(directory_path):
         return None
@@ -228,23 +246,36 @@ def plot_confusion_matrix(output_directory, y_true, y_pred):
     # Genera un grafico della matrice di confusione utilizzando seaborn
     plt.figure(figsize=(10, 8))
     sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=ticks, yticklabels=ticks)
-    plt.xlabel('Etichetta Predetta')
-    plt.ylabel('Etichetta Vera')
-    plt.title('Matrice di Confusione')
+    plt.xlabel('Predicted Labels')
+    plt.ylabel('True Labels')
+    plt.title('Confusion Matrix')
     plt.show()
     plt.savefig(output_directory+'/cm.png')
+
 
 def plot_accuracy(output_directory, scores, stds, names, dataset):
    
     import matplotlib.pyplot as plt
+
+    newName = {
+        'drCif': 'drCif',
+        'freshPrince': 'freshP',
+        'multiHydra': 'multiHydra',
+        'hivecote2': 'HC2',
+        'weasel-d': 'weasel-d',
+        'rdst': 'RDST',
+        'inceptionT': 'inceptionT'
+    }
  
 
     # Creazione del grafico a dispersione
     plt.scatter(names, scores, s=100*np.sqrt(stds), alpha=0.5)
-    plt.title(f'Datset: {dataset}')
-    plt.xlabel('Modelli')
-    plt.ylabel('Accuratezza Media')
+    plt.title(f'Dataset: {dataset}')
+    plt.xlabel('Models')
+    plt.ylabel('Accuracy mean')
     plt.grid(True)
+
+    names = [newName[name] for name in names]
 
     # Aggiunta delle barre di errore
     for x, y,std in zip(names, scores, stds):
