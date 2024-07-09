@@ -27,7 +27,7 @@ datasets = {
 #SETTINGS
 mode = 'TEST'
 ensamble = False
-dataset_name = 'Condensatore'
+dataset_name = 'Liquid'
 
 if ensamble:
     classifier_name = sys.argv[1:]
@@ -60,11 +60,12 @@ elif mode == 'TEST':
 
     output_dir = f'../results/{dataset_name}'
 
-    #dataset = datasets[dataset_name]()
-    dataset = {
-        'train': datasets['Condensatore'](split='ALL'),
-        'test': datasets['Condensatore_conduttivo'](split='ALL')
-    }
+    dataset = datasets[dataset_name]()
+    
+    # dataset = {
+    #     'train': datasets['Condensatore'](split='ALL'),
+    #     'test': datasets['Condensatore_conduttivo'](split='ALL')
+    # }
 
     if compare:
         create_directory(output_dir)

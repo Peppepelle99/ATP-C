@@ -266,6 +266,8 @@ def plot_accuracy(output_directory, scores, stds, names, dataset):
         'rdst': 'RDST',
         'inceptionT': 'inceptionT'
     }
+
+    names = [newName[name] for name in names]
  
 
     # Creazione del grafico a dispersione
@@ -275,7 +277,6 @@ def plot_accuracy(output_directory, scores, stds, names, dataset):
     plt.ylabel('Accuracy mean')
     plt.grid(True)
 
-    names = [newName[name] for name in names]
 
     # Aggiunta delle barre di errore
     for x, y,std in zip(names, scores, stds):

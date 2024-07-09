@@ -61,20 +61,22 @@ def test_classifier(dataset, params, classifier_name, output_dir):
     x_test = x_test.reshape((x_test.shape[0],1, x_test.shape[1]))     
 
     classifier = create_classifier(classifier_name, params)
+
+    start_time_fit = time.time()
     classifier.fit(x_train, y_train)
+    end_time_fit = time.time()
 
-    start_time = time.time()
+    start_time_pred = time.time()
     y_pred = classifier.predict(x_test)
-    end_time = time.time()
+    end_time_pred = time.time()
 
-    print(f'prediction time: {end_time-start_time}')
     
     plot_confusion_matrix(output_dir, y_test, y_pred)
 
     acc = accuracy_score(y_test, y_pred)
     print(f'test accuracy = {acc}')
 
-    return y_pred, y_test, acc, round(end_time-start_time, 3)
+    return y_pred, y_test, acc, round(end_time_pred-start_time_pred, 3), x_test.shape[0], round(end_time_fit-start_time_fit, 3), x_train.shape[0]
 
 def create_classifier(classifier_name, params):
     resample_id = 1
