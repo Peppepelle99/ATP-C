@@ -27,7 +27,7 @@ datasets = {
 #SETTINGS
 mode = 'TEST'
 ensamble = False
-dataset_name = 'Liquid'
+dataset_name = 'Condensatore'
 
 if ensamble:
     classifier_name = sys.argv[1:]
@@ -56,16 +56,23 @@ if mode == 'TRAIN':
 
 elif mode == 'TEST':
 
-    compare = False
+    compare = True
 
     output_dir = f'../results/{dataset_name}'
 
-    dataset = datasets[dataset_name]()
+    # dataset = datasets[dataset_name]()
     
-    # dataset = {
-    #     'train': datasets['Condensatore'](split='ALL'),
-    #     'test': datasets['Condensatore_conduttivo'](split='ALL')
-    # }
+    dataset = {
+        'train': datasets['Condensatore'](split='ALL'),
+        'test': datasets['Condensatore_conduttivo'](split='ALL')
+    }
+
+    if len(dataset) == 2:
+        print(dataset_name)
+        X_train = dataset['test'][:, 1100:-1]
+        y_train = dataset['test'][:, -1]
+        for x in range(16):
+            print(f'class_{x}: {X_train[y_train == x].shape}')
 
     if compare:
         create_directory(output_dir)
@@ -75,11 +82,12 @@ elif mode == 'TEST':
         all_accuracy = []
         for name in names:
             param_grid = select_params(name)
-            y_pred, y_true, acc, prediction_time = test_classifier(dataset, param_grid, name, output_dir)
+            y_pred, y_true, acc, prediction_time, test_size, train_time, train_size = test_classifier(dataset, param_grid, name, output_dir)
             all_pred.append(np.array(y_pred))
             all_true.append(np.array(y_true))
             all_accuracy.append((name, acc, prediction_time))
 
+        print(f'train size: {train_size}, test size: {test_size}')
         all_pred = np.concatenate(all_pred)
         all_true = np.concatenate(all_true)
         plot_confusion_matrix(output_dir, all_true, all_pred)
