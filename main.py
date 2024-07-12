@@ -1,5 +1,5 @@
 import sys
-from utils.utils import load_dataset, select_params, load_dataset_complete,load_dataset_condensatore, create_directory, plot_accuracy, plot_confusion_matrix, load_dataset_condensatore_isolante, load_dataset_condensatore_conduttivo
+from utils.utils import load_dataset, select_params, load_dataset_complete,load_dataset_condensatore, create_directory, plot_accuracy, plot_confusion_matrix, load_dataset_condensatore_isolante, load_dataset_condensatore_conduttivo, load_dataset_condensatore_miscela
 from utils.train_test import fit_classifier, test_classifier
 import nni
 
@@ -21,7 +21,8 @@ datasets = {
     'Complete': load_dataset_complete,
     'Condensatore': load_dataset_condensatore,
     'Condensatore_isolante': load_dataset_condensatore_isolante,
-    'Condensatore_conduttivo': load_dataset_condensatore_conduttivo
+    'Condensatore_conduttivo': load_dataset_condensatore_conduttivo,
+    'Condensatore_miscela': load_dataset_condensatore_miscela
 }
 
 #SETTINGS
@@ -64,15 +65,14 @@ elif mode == 'TEST':
     
     dataset = {
         'train': datasets['Condensatore'](split='ALL'),
-        'test': datasets['Condensatore_conduttivo'](split='ALL')
+        'test': datasets['Condensatore_miscela'](split='ALL')
     }
 
     if len(dataset) == 2:
-        print(dataset_name)
-        X_train = dataset['test'][:, 1100:-1]
-        y_train = dataset['test'][:, -1]
+        X, y = dataset['test']
+        print(f'class_-1: {X[y == -1].shape}')
         for x in range(16):
-            print(f'class_{x}: {X_train[y_train == x].shape}')
+            print(f'class_{x}: {X[y == x].shape}')
 
     if compare:
         create_directory(output_dir)
@@ -81,7 +81,7 @@ elif mode == 'TEST':
         all_true = []
         all_accuracy = []
         for name in names:
-            param_grid = select_params(name)
+            param_grid = select_params(name, dataset_name)
             y_pred, y_true, acc, prediction_time, test_size, train_time, train_size = test_classifier(dataset, param_grid, name, output_dir)
             all_pred.append(np.array(y_pred))
             all_true.append(np.array(y_true))

@@ -127,7 +127,7 @@ def load_dataset_condensatore(split = None):
     
 
 def load_dataset_condensatore_isolante(split = None):
-    data = np.load('../archives/Dataset_Condensatore_isolante.npy')
+    data = np.load('../archives/Dataset_Condensatore_Isolante.npy')
     X = data[:, 1100:-1]  
     y = data[:, -1]   
 
@@ -145,7 +145,25 @@ def load_dataset_condensatore_isolante(split = None):
         return X_train, y_train, X_test, y_test
 
 def load_dataset_condensatore_conduttivo(split = None):
-    data = np.load('../archives/Dataset_Condensatore_conduttivo.npy')
+    data = np.load('../archives/Dataset_Condensatore_Conduttivo.npy')
+    X = data[:, 1100:-1]  
+    y = data[:, -1]   
+
+    X = downsampling(X, 'moving_avg')
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    if split == 'TRAIN':
+        return  X_train, y_train
+    elif split == 'TEST':
+        return X_test, y_test
+    elif split == 'ALL':
+        return X, y
+    else:
+        return X_train, y_train, X_test, y_test
+    
+def load_dataset_condensatore_miscela(split = None):
+    data = np.load('../archives/Dataset_Condensatore_Miscela.npy')
     X = data[:, 1100:-1]  
     y = data[:, -1]   
 
