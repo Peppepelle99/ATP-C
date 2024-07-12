@@ -256,14 +256,15 @@ def visualize_filter(root_dir):
     return 1
 
 def plot_confusion_matrix(output_directory, y_true, y_pred):
-    cm = confusion_matrix(y_true, y_pred)
-
     y_int = y_true.astype(int)
     ticks = np.unique(y_int)
 
+    all_labels = np.union1d(ticks, np.unique(y_pred.astype(int)))
+
+    cm = confusion_matrix(y_true, y_pred, labels=all_labels)
     # Genera un grafico della matrice di confusione utilizzando seaborn
     plt.figure(figsize=(10, 8))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=ticks, yticklabels=ticks)
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=all_labels, yticklabels=all_labels)
     plt.xlabel('Predicted Labels')
     plt.ylabel('True Labels')
     plt.title('Confusion Matrix')

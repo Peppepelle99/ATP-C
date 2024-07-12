@@ -85,7 +85,7 @@ elif mode == 'TEST':
             y_pred, y_true, acc, prediction_time, test_size, train_time, train_size = test_classifier(dataset, param_grid, name, output_dir)
             all_pred.append(np.array(y_pred))
             all_true.append(np.array(y_true))
-            all_accuracy.append((name, acc, prediction_time))
+            all_accuracy.append((name, acc, prediction_time, train_time))
 
         print(f'train size: {train_size}, test size: {test_size}')
         all_pred = np.concatenate(all_pred)
