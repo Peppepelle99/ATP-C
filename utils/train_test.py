@@ -1,5 +1,5 @@
 import numpy as np
-from utils.utils import kfold_split, load_dataset, plot_confusion_matrix
+from utils.utils import kfold_split, plot_confusion_matrix
 from sklearn.model_selection import KFold
 from sklearn.metrics import accuracy_score
 import nni
@@ -110,11 +110,5 @@ def create_classifier(classifier_name, params):
         from aeon.classification.interval_based import DrCIFClassifier
         return DrCIFClassifier(n_estimators=params['n_estimators'], random_state = resample_id)
     
-    if classifier_name == 'EE':
-        from aeon.classification.distance_based import ElasticEnsemble
-        return ElasticEnsemble(random_state = resample_id)
     
-    if classifier_name[0]:
-        from models.model_ensamble import ensamble
-        return ensamble(classifier_name, params)
     

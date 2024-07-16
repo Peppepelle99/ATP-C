@@ -27,25 +27,16 @@ datasets = {
 
 #SETTINGS
 mode = 'TEST'
-ensamble = False
 dataset_name = 'Condensatore'
 
-if ensamble:
-    classifier_name = sys.argv[1:]
-    print('Method: ', classifier_name, mode)
-else:
-    classifier_name = sys.argv[1]
-    print('Method: ', classifier_name, mode)
 
-if ensamble:
-    param_grid = []
-    for c in classifier_name:
-        param_grid.append(select_params(c))
-else:
-    param_grid = select_params(classifier_name, dataset=dataset_name)
+classifier_name = sys.argv[1]
+print('Method: ', classifier_name, mode)
 
-    optimized_params = nni.get_next_parameter()
-    param_grid.update(optimized_params)
+param_grid = select_params(classifier_name, dataset=dataset_name)
+
+optimized_params = nni.get_next_parameter()
+param_grid.update(optimized_params)
 
 
 if mode == 'TRAIN':
